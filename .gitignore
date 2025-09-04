@@ -128,3 +128,8 @@ docker_environment_init.sh
 
 # Exclude Makefiles
 Makefile
+
+# AI Tooling
+.ai/
+.claude/
+CLAUDE.md
