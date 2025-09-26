@@ -7,15 +7,15 @@
   "author": "Marlon Keating <marlonakeating@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --config webpack.prod.js && npm run buildtask:collectstatic",
-    "dev": "webpack --config webpack.dev.js && npm run buildtask:collectstatic",
-    "postinstall": "webpack --config webpack.dev.js && npm run buildtask:collectstatic",
+    "build": "NODE_OPTIONS='--openssl-legacy-provider' webpack --config webpack.prod.js && npm run buildtask:collectstatic",
+    "dev": "NODE_OPTIONS='--openssl-legacy-provider' webpack --config webpack.dev.js && npm run buildtask:collectstatic",
+    "postinstall": "NODE_OPTIONS='--openssl-legacy-provider' webpack --config webpack.dev.js && npm run buildtask:collectstatic",
     "watch": "webpack --mode development --watch",
-    "buildtask:collectstatic": "python manage.py collectstatic --noinput -i *.scss",
+    "buildtask:collectstatic": "python3 manage.py collectstatic --noinput -i *.scss",
     "test": "jest"
   },
   "engines": {
-    "node": "16.20.x"
+    "node": "18.20.x"
   },
   "dependencies": {
     "@tryghost/content-api": "^1.11.13",

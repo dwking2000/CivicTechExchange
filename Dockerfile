@@ -1,5 +1,5 @@
 # https://hub.docker.com/r/nikolaik/python-nodejs
-FROM nikolaik/python-nodejs:python3.10-nodejs16
+FROM nikolaik/python-nodejs:python3.10-nodejs18
 
 # This to get GDAL thanks to https://stackoverflow.com/questions/62546706/how-do-i-install-gdal-in-a-python-docker-environment
 RUN apt-get update && apt-get install
@@ -18,6 +18,9 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 ENV PYTHONUNBUFFERED 1
 
+# Set NODE_OPTIONS for OpenSSL legacy provider support
+ENV NODE_OPTIONS="--openssl-legacy-provider"
+
 RUN mkdir /code
 WORKDIR /code
 
@@ -27,21 +30,21 @@ RUN apt-get update && apt-get install -y libgdal-dev
 # Install and set up nvm
 RUN mkdir /.nvm
 ENV NVM_DIR /.nvm
-ENV NODE_VERSION 12.16.0
+ENV NODE_VERSION 18.20.4
 RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.35.0/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \
     && nvm alias default $NODE_VERSION \
     && nvm use default
 
-# Install pip and yarn depedencies before copying directory to Docker image.
+# Install pip and npm dependencies before copying directory to Docker image.
 COPY requirements.txt /code/requirements.txt
 RUN pip install -r requirements.txt
 
-# Copy files needed for yarn install.
-COPY package.json yarn.lock /code/
-RUN yarn config set ignore-engines true
-RUN yarn --frozen-lockfile --link-duplicates --ignore-scripts
+# Copy files needed for npm install.
+COPY package.json /code/
+RUN npm config set legacy-peer-deps true
+RUN npm install --ignore-scripts
 # Permission issue with node-sass https://github.com/sass/node-sass/issues/1579
 RUN npm rebuild node-sass
 # Copy folders and files whitelisted by .dockerignore.
